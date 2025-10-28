@@ -1,3 +1,4 @@
+const fs = require("fs");
 const logListener = require("./logListener.js");
 
 // commands import
@@ -17,20 +18,30 @@ const opsCommand = require("../chat/commands/op/ops.js");
 
 // main class
 class chatListener {
-    constructor() {
+    constructor(logPath) {
         console.log("Chat Listener initialized.");
 
-        this.logListener = new logListener(this);
+        this.logListener = new logListener(this, logPath);
 
+        this.caseName = '';
         this.opCode = '';
         this.oppedSenderUUIDs = [];
         this.approvedSenderUUIDs = [];
         this.loggedMessages = [];
     }
 
+    updateOutput() {
+        if (!this.caseName) return;
+
+        var filename = this.caseName.replace(/[^a-zA-Z0-9]/g, '');
+        fs.writeFileSync(`../data/${this.filename}`, JSON.stringify(this.loggedMessages));
+    }
+
     onMessage(senderUUID, senderName, message) {
         if ( text.startsWith(".") ) return onCommand(senderUUID, senderName, text.substring(1));
         if ( !approvedSenderUUIDs.includes(senderUUID) ) return;
+
+        if ( !this.logListener.enable !== true ) return;
 
         this.loggedMessages.push({
             timestamp: new Date().toISOString(),
@@ -40,6 +51,8 @@ class chatListener {
         });
 
         console.log(`[${new Date().toISOString()}] ${senderName} (${senderUUID}): ${message}`);
+
+        this.updateOutput();
     }
 
     onCommand(senderUUID, senderName, baseCommand) {
