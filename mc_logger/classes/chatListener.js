@@ -75,35 +75,19 @@ class chatListener {
 
         switch(command) {
             case "allow":
-                allowCommand(senderUUID, senderName, args, this);
-                break;
             case "deny":
-                denyCommand(senderUUID, senderName, args, this);
-                break;
             case "op-me":
-                opMeCommand(senderUUID, senderName, args, this);
+                eval(`${command}Command(senderUUID, senderName, args, this);`);
                 break;
             
             // only ops can do
             case "start":
-                if ( !this.oppedSenderUUIDs.includes(senderUUID) ) return console.log(`[${senderName}] tried to use op command [${command}] but is not opped.`);
-                startCommand(senderUUID, senderName, args, this);
-                break;
             case "stop":
-                if ( !this.oppedSenderUUIDs.includes(senderUUID) ) return console.log(`[${senderName}] tried to use op command [${command}] but is not opped.`);
-                stopCommand(senderUUID, senderName, args, this);
-                break; 
             case "op":
-                if ( !this.oppedSenderUUIDs.includes(senderUUID) ) return console.log(`[${senderName}] tried to use op command [${command}] but is not opped.`);
-                opCommand(senderUUID, senderName, args, this);
-                break;
             case "deop":
-                if ( !this.oppedSenderUUIDs.includes(senderUUID) ) return console.log(`[${senderName}] tried to use op command [${command}] but is not opped.`);
-                deopCommand(senderUUID, senderName, args, this);
-                break;
             case "ops":
                 if ( !this.oppedSenderUUIDs.includes(senderUUID) ) return console.log(`[${senderName}] tried to use op command [${command}] but is not opped.`);
-                opsCommand(senderUUID, senderName, args, this);
+                eval(`${command}Command(senderUUID, senderName, args, this);`);
                 break;
                 
             default:
