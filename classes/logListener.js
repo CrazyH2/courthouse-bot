@@ -10,6 +10,7 @@ class logListener {
             /\[(\d{2}:\d{2}:\d{2})\] \[.*?\/INFO\]: (?:\[System\] \[CHAT\] |\[CHAT\] )?(.*?): (.*)/,
             /\[(\d{2}:\d{2}:\d{2})\] \[.*?\/INFO\]: (?:\[System\] \[CHAT\] )?\[(.*?)\] (.*)/
         ];
+        this.cachedUUIDS = {};
 
         console.log("Log Listener initialized.");
         this.watchFile(path);
@@ -31,6 +32,10 @@ class logListener {
     }
 
     async getUUID(username) {
+        if (this.cachedUUIDS.includes(username)) {
+            return this.cachedUUIDS[username];
+        }
+
         const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
 
         if (response.status === 204) {
@@ -39,7 +44,10 @@ class logListener {
         }
 
         const data = await response.json();
-        return data.id || username;
+        const uuid = data.id || username;
+
+        this.cachedUUIDS[username] = uuid;
+        return uuid;
     }
 
     matchChat(line) {
@@ -78,7 +86,7 @@ class logListener {
             }
         });
 
-        console.log(`Watching file changes: ${filePath}`);
+        console.log(`Watching file changes: ${path}`);
     }
 }
 
