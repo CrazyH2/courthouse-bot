@@ -3,7 +3,9 @@ module.exports = (senderUUID, senderName, args, chatListener) => {
         console.log(`${senderName} (${senderUUID}) is already opped.`);
         return;
     }
+    if (args.length !== 1) return;
+    const target = await chatListener.logListener.getUUID(args[0]);
     
-    chatListener.oppedSenderUUIDs.push(senderUUID);
-    console.log(`Gave OP to ${senderName} (${senderUUID})`);
+    chatListener.oppedSenderUUIDs.push(target);
+    console.log(`Gave OP to ${args[0]} (${target})`);
 }
