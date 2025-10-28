@@ -20,8 +20,9 @@ const opsCommand = require("../chat/commands/op/ops.js");
 
 // main class
 class chatListener {
-    constructor(logPath) {
+    constructor(logPath, outFolder) {
         logPath = path.resolve(logPath);
+        outFolder = path.resolve(outFolder);
 
         console.log("\n\n\n[SERVER] Chat Listener initialized.");
 
@@ -40,7 +41,7 @@ class chatListener {
         if (!this.caseName) return;
 
         const filename = this.caseName.replace(/[^a-zA-Z0-9]/g, '');
-        const dir = path.resolve('../_data/court_proceedings/');
+        const dir = this.outFolder;
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }

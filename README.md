@@ -3,14 +3,20 @@
 ## Commands
 
 #### For users
-.allow \n
-.deny \n
-.op-me {code} \n
+`.allow`
+
+`.deny`
+
+`.op-me {code}`
 
 #### For OPs (Note: this isnt normal ops but bot ops)
-.start {filename} - *e.g. huckle-vs-parrot* \n
-.stop \n
-.op {username} \n
-.deop {username} \n
-.ops \n
+`.start {filename}` - *e.g. huckle-vs-parrot*
+
+`.stop`
+
+`.op {username}`
+
+`.deop {username}`
+
+`.ops`
 

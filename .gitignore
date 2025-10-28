@@ -1,4 +1,8 @@
-config.json
+/bot/config.json
 *.log
 node_modules/
 dist/
+
+# Ignore mc_config.json which contains user-specific paths
+mc_logger/mc_config.json
+bot/config.json
