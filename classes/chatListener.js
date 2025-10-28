@@ -36,7 +36,7 @@ class chatListener {
         if (!this.caseName) return;
 
         var filename = this.caseName.replace(/[^a-zA-Z0-9]/g, '');
-        fs.writeFileSync(`../data/${this.filename}`, JSON.stringify(this.loggedMessages));
+        fs.writeFileSync(`../data/${filename}.json`, JSON.stringify(this.loggedMessages));
     }
 
     onMessage(senderUUID, senderName, message) {
@@ -58,7 +58,7 @@ class chatListener {
     }
 
     onCommand(senderUUID, senderName, baseCommand) {
-        const command = baseCommand.split(" ")[0];
+        const command = baseCommand.split(" ")[0].toLowerCase();
         const args = baseCommand.replace(command, "").split(" ").map(e => e.trim());
         
         switch(command) {

@@ -4,5 +4,13 @@ module.exports = (senderUUID, senderName, args, chatListener) => {
         return;
     }
 
-    console.log(`Opped users: \n - ${chatListener.oppedSenderUUIDs.join('\n - ')}`);
+
+    const oppedUsernames = [];
+    chatListener.oppedSenderUUIDs.map(e => (e) => {
+        const cachedOps = chatListener.logListener.cachedUUIDS;
+        const oppedUsername = Object.keys(cachedOps).find(key => cachedOps[key] === e);
+        oppedUsernames.push(oppedUsername);
+    });
+
+    console.log(`Opped users: \n - ${oppedUsernames.join('\n - ')}`);
 }
