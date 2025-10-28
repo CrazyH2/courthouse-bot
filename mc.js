@@ -1,4 +1,4 @@
-const { logPath } = require('./config.json');
+const { logPath, outFolder } = require('./mc_config.json');
 const chatListener = require("./classes/chatListener");
 
-new chatListener(logPath);
+new chatListener(logPath, outFolder);
