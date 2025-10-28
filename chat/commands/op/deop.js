@@ -1,11 +1,11 @@
 module.exports = async (senderUUID, senderName, args, chatListener) => {
-    if (!chatListener.oppedSenderUUIDs.includes(senderUUID)) {
-        console.log(`${senderName} (${senderUUID}) is not opped.`);
-        return;
-    }
     if (args.length !== 1) return;
     const target = await chatListener.logListener.getUUID(args[0]);
+    if (!chatListener.oppedSenderUUIDs.includes(target)) {
+        console.log(`[${senderName}] ${args[0]} is not OP.`);
+        return;
+    }
     
     chatListener.oppedSenderUUIDs = chatListener.oppedSenderUUIDs.filter(uuid => uuid !== target);
-    console.log(`Removed OP from ${args[0]} (${target})`);
+    console.log(`[${senderName}] Removed OP from ${args[0]} (${target})`);
 }

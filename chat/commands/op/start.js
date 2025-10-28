@@ -1,10 +1,11 @@
 module.exports = (senderUUID, senderName, args, chatListener) => {
     if (chatListener.logListener.enabled === true) {
-        console.log('Logging is already enabled!')
+        console.log(`[${senderName}] Logging is already enabled!`);
         return;
     }
     if (args.length !== 1) return;
 
     chatListener.caseName = args[0];
     chatListener.logListener.enabled = true;
+    console.log(`[${senderName}] Started logging chat to case: ${args[0]}`);
 }

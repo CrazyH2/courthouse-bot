@@ -1,6 +1,6 @@
 module.exports = (senderUUID, senderName, args, chatListener) => {
     if (chatListener.oppedSenderUUIDs.length > 1) {
-        console.log('No one is opped.');
+        console.log(`[${senderName}] No one is opped.`);
         return;
     }
 
@@ -12,5 +12,5 @@ module.exports = (senderUUID, senderName, args, chatListener) => {
         oppedUsernames.push(oppedUsername);
     });
 
-    console.log(`Opped users: \n - ${oppedUsernames.join('\n - ')}`);
+    console.log(`[${senderName}] Opped users: \n - ${oppedUsernames.join('\n - ')}`);
 }

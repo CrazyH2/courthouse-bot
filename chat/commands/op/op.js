@@ -1,11 +1,11 @@
-module.exports = (senderUUID, senderName, args, chatListener) => {
-    if (chatListener.oppedSenderUUIDs.includes(senderUUID)) {
-        console.log(`${senderName} (${senderUUID}) is already opped.`);
-        return;
-    }
+module.exports = async (senderUUID, senderName, args, chatListener) => {
     if (args.length !== 1) return;
     const target = await chatListener.logListener.getUUID(args[0]);
+    if (chatListener.oppedSenderUUIDs.includes(target)) {
+        console.log(`[${senderName}] ${args[0]} is already OP.`);
+        return;
+    }
     
     chatListener.oppedSenderUUIDs.push(target);
-    console.log(`Gave OP to ${args[0]} (${target})`);
+    console.log(`[${senderName}] Gave OP to ${args[0]} (${target})`);
 }

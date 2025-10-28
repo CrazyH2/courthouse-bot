@@ -5,13 +5,14 @@ class logListener {
         this.parent = parent;
         this.enabled = false;
         this.chatPatterns = [
-            /\[(\d{2}:\d{2}:\d{2})\] \[.*?\/INFO\]: (?:\[CHAT\]|\[Not Secure\]) <(.*?)> (.*)/,
             /\[(\d{2}:\d{2}:\d{2})\] \[.*?\/INFO\]: (?:\[System\] \[CHAT\] |\[CHAT\] )?(.*?): (.*)/,
-            /\[(\d{2}:\d{2}:\d{2})\] \[.*?\/INFO\]: (?:\[System\] \[CHAT\] )?\[(.*?)\] (.*)/
+            /\[(\d{2}:\d{2}:\d{2})\] \[(.*?)\/INFO\]: (?:\[SYSTEM\] )?\[CHAT\] <([^>]+)> (.*)/
         ];
         this.cachedUUIDS = {};
+        this.lastSender = null;
+        this.lastMessage = null;
 
-        console.log("Log Listener initialized.");
+        console.log("[SERVER] Log Listener initialized.");
         this.watchFile(path);
     }
 
@@ -19,26 +20,26 @@ class logListener {
         this.enabled = true;
         this.parent.opCode = Math.floor(Math.random() * 899 + 100);
 
-        console.log("Log Listener enabled.");
-        console.log(`Generated OP code: ${this.opCode}`);
+        console.log("[SERVER] Log Listener enabled.");
+        console.log(`[SERVER] Generated OP code: ${this.opCode}`);
     }
-    
+
     disable() {
         this.enabled = false;
         this.parent.opCode = '';
 
-        console.log("Log Listener disabled.");
+        console.log("[SERVER] Log Listener disabled.");
     }
 
     async getUUID(username) {
-        if (this.cachedUUIDS.includes(username)) {
+        if (Object.keys(this.cachedUUIDS).includes(username)) {
             return this.cachedUUIDS[username];
         }
 
         const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
 
         if (response.status === 204) {
-            console.log(`UUID not found for player [${username}]. Defaulting to username!`)
+            console.log(`[SERVER] UUID not found for player [${username}]. Defaulting to username!`)
             return username;
         }
 
@@ -50,9 +51,23 @@ class logListener {
     }
 
     matchChat(line) {
-        for (const regex of chatPatterns) {
+        for (const regex of this.chatPatterns) {
             const match = line.match(regex);
-            if (match) return match;
+            if (match) {
+                if (regex === this.chatPatterns[0]) {
+                    return {
+                        time: match[1],
+                        sender: match[2],
+                        message: match[3]
+                    };
+                } else if (regex === this.chatPatterns[1]) {
+                    return {
+                        time: match[1],
+                        sender: match[3],
+                        message: match[4]
+                    };
+                }
+            }
         }
         return null;
     }
@@ -62,7 +77,8 @@ class logListener {
         for (const line of lines) {
             const match = this.matchChat(line);
             if (match) {
-                const [ , time, sender, message ] = match;
+                let { time, sender, message } = match;
+                sender = sender.split(' ').at(-1) || sender;
 
                 const uuid = await this.getUUID(sender);
                 this.parent.onMessage(uuid, sender, message);
@@ -71,7 +87,7 @@ class logListener {
     }
 
     watchFile(path) {
-        var onLine = this.onLine;
+        var onLine = this.onLine.bind(this);
         fs.watchFile(path, { interval: 100 }, (curr, prev) => {
             if (curr.size > prev.size) {
                 const stream = fs.createReadStream(path, {
@@ -85,7 +101,7 @@ class logListener {
             }
         });
 
-        console.log(`Watching file changes: ${path}`);
+        console.log(`[SERVER] Watching file changes: ${path}`);
     }
 }
 

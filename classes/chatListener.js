@@ -1,4 +1,6 @@
 const fs = require("fs");
+const path = require('path');
+
 const logListener = require("./logListener.js");
 
 // commands import
@@ -19,7 +21,9 @@ const opsCommand = require("../chat/commands/op/ops.js");
 // main class
 class chatListener {
     constructor(logPath) {
-        console.log("Chat Listener initialized.");
+        logPath = path.resolve(logPath);
+
+        console.log("\n\n\n[SERVER] Chat Listener initialized.");
 
         this.logListener = new logListener(this, logPath);
 
@@ -29,21 +33,27 @@ class chatListener {
         this.approvedSenderUUIDs = [];
         this.loggedMessages = [];
 
-        console.log(`Generated OP code: ${this.opCode}`);
+        console.log(`[SERVER] Generated OP code: ${this.opCode}\n\n`);
     }
 
     updateOutput() {
         if (!this.caseName) return;
 
-        var filename = this.caseName.replace(/[^a-zA-Z0-9]/g, '');
-        fs.writeFileSync(`../data/${filename}.json`, JSON.stringify(this.loggedMessages));
+        const filename = this.caseName.replace(/[^a-zA-Z0-9]/g, '');
+        const dir = path.resolve('../_data/court_proceedings/');
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        const filePath = path.join(dir, `${filename}.json`);
+        fs.writeFileSync(filePath, JSON.stringify(this.loggedMessages, null, 4));
     }
 
     onMessage(senderUUID, senderName, message) {
-        if ( text.startsWith(".") ) return onCommand(senderUUID, senderName, text.substring(1));
-        if ( !approvedSenderUUIDs.includes(senderUUID) ) return;
+        if ( message.startsWith(".") ) return this.onCommand(senderUUID, senderName, message.substring(1));
+        if ( !this.approvedSenderUUIDs.includes(senderUUID) ) return;
 
-        if ( !this.logListener.enable !== true ) return;
+        if ( this.logListener.enabled == false ) return;
 
         this.loggedMessages.push({
             timestamp: new Date().toISOString(),
@@ -52,15 +62,16 @@ class chatListener {
             message: message
         });
 
-        console.log(`[${new Date().toISOString()}] ${senderName} (${senderUUID}): ${message}`);
+        console.log(`[${new Date().toISOString()}] [${senderName}] (${senderUUID}): ${message}`);
 
         this.updateOutput();
     }
 
     onCommand(senderUUID, senderName, baseCommand) {
-        const command = baseCommand.split(" ")[0].toLowerCase();
-        const args = baseCommand.replace(command, "").split(" ").map(e => e.trim());
-        
+        let command = baseCommand.split(" ")[0];
+        const args = baseCommand.replace(command, "").split(" ").map(e => e.trim()).filter(e => e.length > 0);
+        command = command.toLowerCase();
+
         switch(command) {
             case "allow":
                 allowCommand(senderUUID, senderName, args, this);
@@ -95,7 +106,7 @@ class chatListener {
                 break;
                 
             default:
-                console.log(`Unknown command: [${senderName}] .${command}`); // whoever sent this is goofy
+                console.log(`[${senderName}] Unknown command: ${command}`); // whoever sent this is goofy
                 break;
         }
     }

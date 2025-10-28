@@ -1,13 +1,13 @@
 module.exports = (senderUUID, senderName, args, chatListener) => {
     if (chatListener.logListener.enabled !== true) {
-        console.log(`Logging is disabled. Enable logging to allow users.`);
+        console.log(`[${senderName}] Logging is disabled. Enable logging to allow users.`);
         return;
     }
     if (chatListener.approvedSenderUUIDs.includes(senderUUID)) {
-        console.log(`${senderName} (${senderUUID}) is already allowed.`);
+        console.log(`[${senderName}] You are already allowed.`);
         return;
     }
     
     chatListener.approvedSenderUUIDs.push(senderUUID);
-    console.log(`Allowed ${senderName} (${senderUUID})`);
+    console.log(`[${senderName}] Allowed ${senderName} (${senderUUID})`);
 }
