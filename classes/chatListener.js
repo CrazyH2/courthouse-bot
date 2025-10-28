@@ -24,10 +24,12 @@ class chatListener {
         this.logListener = new logListener(this, logPath);
 
         this.caseName = '';
-        this.opCode = '';
+        this.opCode = Math.floor(Math.random() * 899 + 100);
         this.oppedSenderUUIDs = [];
         this.approvedSenderUUIDs = [];
         this.loggedMessages = [];
+
+        console.log(`Generated OP code: ${this.opCode}`);
     }
 
     updateOutput() {
